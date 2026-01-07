@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "gmail": {
+      "command": "/Users/alexsmilansky/repos/mcp-gmail-server/venv/bin/python",
+      "args": ["/Users/alexsmilansky/repos/mcp-gmail-server/server.py"],
+      "env": {}
+    }
+  }
+}
