@@ -1,18 +1,14 @@
-from typing import List, Dict
-
 from mcp.server.fastmcp import FastMCP
-from gmail.client import list_unread_messages
 
+# Create MCP server
 mcp = FastMCP("gmail-mcp-server")
 
+# Register tools
+from tools.unread_emails import register_unread_emails
+from tools.draft_reply import register_draft_reply
 
-@mcp.tool()
-def get_unread_emails(max_results: int = 5) -> List[Dict[str, str]]:
-    """
-    Return a list of unread emails from Gmail.
-    """
-    return list_unread_messages(max_results)
-
+register_unread_emails(mcp)
+register_draft_reply(mcp)
 
 if __name__ == "__main__":
     mcp.run()

@@ -52,3 +52,54 @@ def list_unread_messages(max_results: int) -> List[Dict[str, str]]:
         )
 
     return output
+
+def get_message_metadata(message_id: str) -> dict:
+    creds = get_credentials()
+    service = build("gmail", "v1", credentials=creds)
+
+    message = (
+        service.users()
+        .messages()
+        .get(
+            userId="me",
+            id=message_id,
+            format="metadata",
+            metadataHeaders=["From", "Subject", "Message-Id", "References"],
+        )
+        .execute()
+    )
+
+    headers = {h["name"].lower(): h["value"] for h in message["payload"]["headers"]}
+
+    return {
+        "thread_id": message["threadId"],
+        "from": headers.get("from", ""),
+        "subject": headers.get("subject", ""),
+        "message_id": headers.get("message-id", ""),
+        "references": headers.get("references"),
+    }
+
+def create_draft_reply(
+    *,
+    thread_id: str,
+    raw_message: str,
+) -> dict:
+    creds = get_credentials()
+    service = build("gmail", "v1", credentials=creds)
+
+    draft = (
+        service.users()
+        .drafts()
+        .create(
+            userId="me",
+            body={
+                "message": {
+                    "raw": raw_message,
+                    "threadId": thread_id,
+                }
+            },
+        )
+        .execute()
+    )
+
+    return draft
